@@ -33,6 +33,7 @@ class Entry(db.Model):
         else:
             return False
 
+
 #
 @app.route("/")
 def index():
@@ -42,6 +43,7 @@ def index():
     return redirect("/blog")
 #
 @app.route("/blog")
+
 def display_blog_entries():
     '''
     Either list one entry with the given ID
