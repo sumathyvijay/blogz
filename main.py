@@ -59,7 +59,7 @@ def display_blog_entries():
     # TODO store sort direction in session[] so we remember user's preference
     sort = request.args.get('sort')
     if (sort=="newest"):
-        all_entries = Blog.query.order_by(Entry.created.desc()).all()
+        all_entries = Blog.query.order_by(Blog.created.desc()).all()
     else:
         all_entries = Blog.query.all()   
     return render_template('all_entries.html', title="All Entries", all_entries=all_entries)
