@@ -10,7 +10,7 @@ db = SQLAlchemy(app)
 app.secret_key = 'f8wv3w2f>v9j4sEuhcNYydAGMzzZJgkGgyHE9gUqaJcCk^f*^o7fQyBT%XtTvcYM'
 
 
-class Blog(db.Model):
+class Entry(db.Model):
     '''
     Stores blog entries
     '''
