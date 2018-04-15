@@ -2,15 +2,15 @@
 TEST MESSAGE
 {% block content %}
     <h1><center>Build a Blog</center></h1>
-    <ul>
+    
         {% for entry in all_entries %}
-            <li>
+            
                 <h2>
                     <a href="/blog?id={{ entry.id }}">{{ entry.title }}</a>
                 </h2>
                 <p>{{ entry.body }}</p>
                 
-            </li>
+            
         {% endfor %}
-    </ul>
+    
 {% endblock %}

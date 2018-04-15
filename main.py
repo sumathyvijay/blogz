@@ -77,11 +77,11 @@ def newpost():
         newpost = Entry(newpost_title, newpost_body)
 
         if newpost.is_valid():
-            db.session.add(new_entry)
+            db.session.add(newpost)
             db.session.commit()
 
             # display just this most recent blog entry
-            url = "/blog?id=" + str(newpost.id)
+            url = "/blog?sort=oldest"
             return redirect(url)
         else:
             flash("Please check your entry for errors. Both a title and a body are required.")

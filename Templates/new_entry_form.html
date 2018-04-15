@@ -9,13 +9,13 @@
   TEST MESSAGE
 {% block content %}
 <h1>Add a Block Entry</h1>
-<form action="/new_entry" method="post">
+<form action="/newpost" method="post">
 
         <label for="title_field">Title for your new blog</label>
-        <input id="title_field" name="title" type="text" value="{{ new_entry_title }}">
+        <input id="title_field" name="title" type="text" value="{{ newpost_title }}">
 
         <label for="body_field">Your new blog:</label>
-        <textarea rows="4" cols="50" id="body_field" name="body" >{{ new_entry_body }}</textarea>
+        <textarea rows="4" cols="50" id="body_field" name="body" >{{ newpost_body }}</textarea>
 
     <input id="submit_button" type="submit" value="Add Entry">
 </form>
