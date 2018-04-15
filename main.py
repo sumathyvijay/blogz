@@ -10,7 +10,7 @@ db = SQLAlchemy(app)
 app.secret_key = 'f8wv3w2f>v9j4sEuhcNYydAGMzzZJgkGgyHE9gUqaJcCk^f*^o7fQyBT%XtTvcYM'
 
 
-class Entry(db.Model):
+class Blog(db.Model):
     '''
     Stores blog entries
     '''
@@ -52,16 +52,16 @@ def display_blog_entries():
     # TODO refactor to use routes with variables instead of GET parameters
     entry_id = request.args.get('id')
     if (entry_id):
-        entry = Entry.query.get(entry_id)
+        entry = Blog.query.get(entry_id)
         return render_template('single_entry.html', title="Blog Entry", entry=entry)
 
     # if we're here, we need to display all the entries
     # TODO store sort direction in session[] so we remember user's preference
     sort = request.args.get('sort')
     if (sort=="newest"):
-        all_entries = Entry.query.order_by(Entry.created.desc()).all()
+        all_entries = Blog.query.order_by(Entry.created.desc()).all()
     else:
-        all_entries = Entry.query.all()   
+        all_entries = Blog.query.all()   
     return render_template('all_entries.html', title="All Entries", all_entries=all_entries)
 
 #
@@ -74,14 +74,14 @@ def newpost():
     if request.method == 'POST':
         newpost_title = request.form['title']
         newpost_body = request.form['body']
-        newpost = Entry(newpost_title, newpost_body)
+        newpost = Blog(newpost_title, newpost_body)
 
         if newpost.is_valid():
             db.session.add(newpost)
             db.session.commit()
 
             # display just this most recent blog entry
-            url = "/blog?sort=oldest"
+            url = "/blog?id=" + str(newpost.id)
             return redirect(url)
         else:
             flash("Please check your entry for errors. Both a title and a body are required.")
