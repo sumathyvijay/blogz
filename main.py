@@ -9,7 +9,11 @@ app.config['SQLALCHEMY_ECHO']=True
 blogs=[]
 db=SQLAlchemy(app)
 app.secret_key = 'f8wv3w2f>v9j4sEuhcNYydAGMzzZJgkGgyHE9gUqaJcCk^f*^o7fQyBT%XtTvcYM'
-return render_template('new_entry_form.html', title="Create new blog entry")
+
+@app.route('/newpost')
+def newpost():
+    return render_template('new_entry_form.html', title="Create new blog entry")
+
 
 @app.route('/blog',methods=['GET'])
 def display_blog_entries():
