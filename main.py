@@ -1,97 +1,144 @@
-from flask import Flask, request, redirect, render_template, flash
+from flask import Flask, request, render_template, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 
-app = Flask(__name__)
-app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:buildablog@localhost:8889/build-a-blog'
-app.config['SQLALCHEMY_ECHO'] = True
-db = SQLAlchemy(app)
-app.secret_key = 'f8wv3w2f>v9j4sEuhcNYydAGMzzZJgkGgyHE9gUqaJcCk^f*^o7fQyBT%XtTvcYM'
+app=Flask(__name__)
+app.config['DEBUG']=True
+app.config['SQLALCHEMY_DATABASE_URI']= 'mysql+pymysql://blogz:password@localhost:8889/blogz'
+app.config['SQLALCHEMY_ECHO']=True
 
+blogs=[]
+db=SQLAlchemy(app)
+app.secret_key = 'raj123pta33'
 
-class Blog(db.Model):
-    '''
-    Stores blog entries
-    '''
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(180))
-    body = db.Column(db.String(1000))
-    created = db.Column(db.DateTime)
+class   Blog(db.Model):
+        id= db.Column(db.Integer, primary_key= True)
+        title= db.Column(db.String(120))
+        body= db.Column(db.String(500))
+        owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+        
+        def __init__(self,title,body,owner):
+            self.title=title
+            self.body=body
+            self.owner=owner
+class   User(db.Model):
+        id=db.Column(db.Integer, primary_key= True)
+        username=db.Column(db.String(50))
+        password=db.Column(db.String(15))
+        blogs=db.relationship('Blog', backref='owner')
+        
+        def __init__(self,username,password):
+            self.username=username
+            self.password=password
+        
 
-    def __init__(self, title, body ):
-        self.title = title
-        self.body = body
-        self.created = datetime.utcnow()
-
-    def is_valid(self):
-        '''
-        Our naive validation just requires that everything be present.
-        '''
-        if self.title and self.body and self.created:
-            return True
+@app.before_request
+def require_login():
+    allowed_routes= ['index','login','signup','blog']
+    if  request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
+            
+@app.route('/login', methods=['POST','GET'])
+def login():
+    if  request.method=='POST':
+        username=request.form['username']
+        password=request.form['password']
+        user=User.query.filter_by(username=username).first()
+        if  user and user.password==password:
+            session['username']=username
+            flash('logged in')
+            return  redirect('/newpost')
         else:
-            return False
+            flash('User password incorret, or user does not exist', 'error')
+    return render_template("login.html")
+        
 
 
-#
-@app.route("/")
-def index():
-    '''
-    Convenience route so the bare URL displays all the entries
-    '''
-    return redirect("/blog")
-#
-@app.route("/blog")
-
-def display_blog_entries():
-    '''
-    Either list one entry with the given ID
-    Or list all blog entries (in default or newest order)
-    '''
-    # TODO refactor to use routes with variables instead of GET parameters
-    entry_id = request.args.get('id')
-    if (entry_id):
-        entry = Blog.query.get(entry_id)
-        return render_template('single_entry.html', title="Blog Entry", entry=entry)
-
-    # if we're here, we need to display all the entries
-    # TODO store sort direction in session[] so we remember user's preference
-    sort = request.args.get('sort')
-    if (sort=="newest"):
-        all_entries = Blog.query.order_by(Blog.created.desc()).all()
-    else:
-        all_entries = Blog.query.all()   
-    return render_template('all_entries.html', title="All Entries", all_entries=all_entries)
-
-#
-@app.route('/newpost', methods=['GET', 'POST'])
+@app.route('/newpost')
 def newpost():
-    '''
-    GET: Display form for new blog entry
-    POST: create new entry or redisplay form if values are invalid
-    '''
-    if request.method == 'POST':
-        newpost_title = request.form['title']
-        newpost_body = request.form['body']
-        newpost = Blog(newpost_title, newpost_body)
+    return render_template('post.html',title='New Post Entry!')
 
-        if newpost.is_valid():
-            db.session.add(newpost)
-            db.session.commit()
-
-            # display just this most recent blog entry
-            url = "/blog?id=" + str(newpost.id)
-            return redirect(url)
+@app.route('/blog',methods=['GET'])
+def blog():
+    if request.method=='GET':
+        if not request.args.get('id') is None:
+            id=(int)(request.args.get('id'))
+            blogs=Blog.query.filter_by(id=id).first()
+            return render_template('single.html',title='Single Post!',blogs=blogs)
+        if not request.args.get('user') is None:
+            id=(int)(request.args.get('user'))
+            users=User.query.filter_by(id=id).all()
+            blogs=Blog.query.all()
+            return render_template('blog.html',title='User Posts!',blogs=blogs,users=users)
+    #blogs=Blog.query.all()
+        if  not request.args.get('page') is None:
+            page=(int)(request.args.get('page'))
         else:
-            flash("Please check your entry for errors. Both a title and a body are required.")
-            return render_template('new_entry_form.html',
-                title="Create new blog entry",
-                newpost_title=newpost_title,
-                newpost_body=newpost_body)
+            page=1
+        users=User.query.all()  
+        blogs = Blog.query.all()
+        return render_template('blog.html',title='Blog!',blogs=blogs,users=users)
+    
 
-    else: # GET request
-        return render_template('new_entry_form.html', title="Create new blog entry")
-#
-if __name__ == '__main__':
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        verify = request.form['verify']
+    
+        if username=="" or username==" ":
+            flash("That not valid user")
+        elif password==""  or password==" " or len(password)<3:
+            flash("That's password  not valid")
+        elif verify=="" or verify==" ":
+            flash("password does not match")
+        else:
+            existing_user = User.query.filter_by(username=username).first()
+        
+            if  existing_user:  
+                flash('user name already exist','error')
+            else:
+                new_user = User(username, password)
+                db.session.add(new_user)
+                db.session.commit()
+                session['username'] = username
+                return redirect('/newpost')
+        
+    # TODO - user better response messaging
+            #return "<h1>User Name already Exist</h1>"
+
+    return render_template('signup.html')
+    
+@app.route('/logout')
+def logout():
+    del session['username']
+    return redirect('/')    
+
+@app.route('/',methods=['POST', 'GET'])
+def index():
+    #owner = User.query.filter_by(username=session['username']).first()
+    
+    users = User.query.all()
+    return render_template('index.html',title="Blogz Users",users=users)
+    
+
+    
+@app.route('/newpost',methods=['POST'])
+def submitpost():   
+    owner = User.query.filter_by(username=session['username']).first()
+    if  request.method=='POST':
+        title=request.form['title']
+        body=request.form['body']
+        newpost=Blog(title=title,body=body,owner=owner)
+        if title=="" or body=="" or title==" " or body==' ':
+            flash("invalid")
+            return render_template('post.html')
+
+        db.session.add(newpost)
+        db.session.commit()
+        blogs=Blog.query.order_by("id desc").all()
+        return redirect('/blog')
+    return render_template('blog.html',title='Build a Blog!', blogs=blogs)
+
+if __name__=='__main__':
     app.run()
