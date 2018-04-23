@@ -55,7 +55,7 @@ def login():
 
 @app.route('/newpost')
 def newpost():
-    return render_template('post.html',title='New Post Entry!')
+    return render_template('new_entry_form.html',title='New Post Entry!')
 
 @app.route('/blog',methods=['GET'])
 def blog():
@@ -63,12 +63,12 @@ def blog():
         if not request.args.get('id') is None:
             id=(int)(request.args.get('id'))
             blogs=Blog.query.filter_by(id=id).first()
-            return render_template('single.html',title='Single Post!',blogs=blogs)
+            return render_template('single_entry.html',title='Single Post!',blogs=blogs)
         if not request.args.get('user') is None:
             id=(int)(request.args.get('user'))
             users=User.query.filter_by(id=id).all()
             blogs=Blog.query.all()
-            return render_template('blog.html',title='User Posts!',blogs=blogs,users=users)
+            return render_template('all_entries.html',title='User Posts!',blogs=blogs,users=users)
     #blogs=Blog.query.all()
         if  not request.args.get('page') is None:
             page=(int)(request.args.get('page'))
@@ -76,7 +76,7 @@ def blog():
             page=1
         users=User.query.all()  
         blogs = Blog.query.all()
-        return render_template('blog.html',title='Blog!',blogs=blogs,users=users)
+        return render_template('all_entries.html',title='Blog!',blogs=blogs,users=users)
     
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -132,13 +132,13 @@ def submitpost():
         newpost=Blog(title=title,body=body,owner=owner)
         if title=="" or body=="" or title==" " or body==' ':
             flash("invalid")
-            return render_template('post.html')
+            return render_template('new_entry_form.html')
 
         db.session.add(newpost)
         db.session.commit()
         blogs=Blog.query.order_by("id desc").all()
         return redirect('/blog')
-    return render_template('blog.html',title='Build a Blog!', blogs=blogs)
+    return render_template('all_entries.html',title='Build a Blog!', blogs=blogs)
 
 if __name__=='__main__':
     app.run()
