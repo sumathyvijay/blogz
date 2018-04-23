@@ -19,7 +19,7 @@ def display_blog_entries():
             entry =Blog.query.filter_by(entry_id =entry_id ).first()
             return render_template('single_entry.html', title="Blog Entry", entry=entry)
         if not request.args.get('user') is None:
-            entry_id = request.args.get('id')=(int)(request.args.get('user'))
+            id =(int)(request.args.get('user'))
             users=User.query.filter_by(id=id).all()
             all_entries =Blog.query.all()
             return render_template('all_entries.html', title="All Entries", all_entries=all_entries,users=users)
