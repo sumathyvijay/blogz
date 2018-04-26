@@ -1,17 +1,44 @@
 {% extends "base.html" %}
-
 {% block content %}
-  <h1>Blog Users!</h1>
 
-  <hr />
+    <h1> {{ title }} </h1>
+    <h3> {{ welcome }} </h3>
 
- 
+    {% if blogs|length == 0 %}
+        <p> No blogs yet </p>
+    {% else %}
+        <table>
 
-      <ul>
-          {% for user in users %}
-         <li><a href="/blog?user={{user.id}}">{{user.username}}</a></li>
-            
-          {% endfor %}
-       </ul>
+        {% for blog in blogs %}
+                
+        
+        <tr>
+                    <td>
+                        <form id= "individual_blog" action="/individual">
+                            <input form= "individual_blog" type= "submit" 
+                                class= "link_button" name= "blog_title" 
+                                value= "{{ blog.title }}"/>
+                        </form>
+                    </td>
+                </tr>
+                <tr>    
+                    <td> 
+                        {{ blog.body }}
+                    </td>
+                </tr>
 
- {% endblock %}
+                <tr>    
+                    <td  style="font-size: 15px;"> 
+                        <form id= "individual_user" action= "/UserPage">
+                            Written by:<input form= "individual_user" type= "submit" 
+                                class= "link_button1" name= "user_link" 
+                                value= "{{ blog.owner }}"/><br><br>
+                        </form>
+                    </td>
+                </tr>
+        {% endfor %}
+
+        </table>
+    {% endif %}
+
+{% endblock %}

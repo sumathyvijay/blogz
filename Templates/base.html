@@ -2,30 +2,79 @@
 <html>
     <head>
         <title>{{title}}</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <style>
+            *{
+                font-family: 'Times New Roman', Times, serif;
+            }
+            .error {
+                color: red;
+            }
+            table, tr, td {
+                border: 0px solid black;
+            }
+           .link_button { 
+                background: none;
+                border: none;
+                text-decoration: underline;
+                cursor: pointer; 
+                font-size: 20px;
+                color: blue;
+            } 
+
+           .link_button1 { 
+                background: none;
+                border: none;
+                text-decoration: underline;
+                cursor: pointer; 
+                font-size: 15px;
+                color: blue;
+            }            
+            header, footer {
+                text-align: center;
+                font-size: 1.25em;
+                background-color: #ffffff;
+                border: 0px solid black;
+            }
+            body {
+                background-color: #ffffff;
+            }
+            main {
+                background-color: #ffffff;
+                font-size: 1.125em;
+                border: 0px solid black;
+            }
+            thead {
+                font-size: 1.125em;
+                text-align: center;
+
+            }
+        </style>
     </head>
-<body>
-    <!-- main element is a flexbox  -->
-    
-
-
-            <a href='/blog?sort=oldest'>Main Blog Page</a>&nbsp;&nbsp;&nbsp;
-            <a href='/newpost'>Add a blog entry</a>
- 
-
-        <div class="container">
-            <!-- No message categories  -->
-            {% with messages = get_flashed_messages() %}
-                {% for message in messages %}
-                    <div class="flash_message">{{message|safe}}</div>
-                {% endfor %}
-            {% endwith %}
+    <body>
+        <header>
+            <div>
+                <table>
+                    <tr>
+                        <td> <a href= '/UserPage'> Home </a> </td>
+                        <td> <a href= '/blog'> All Posts </a> </td>
+                        <td> <a href= '/newpost'> New Post </a> </td>
+                        <td width="500"></td>
+                        <td> <a href= '/login'> Login </a> </td>
+                        <td> <a href= '/logout'> Logout </a> </td>
+                        <td> <a href= '/signup'> signup </a> </td> 
+                    </tr>
+                </table>
+            </div>
+        </header>
+        <br>
+        <main>
 
             {% block content %}
+
             {% endblock %}
 
-        </div> <!-- .container -->
-  
+        </main>
+        <br>
 
-</body>
+    </body>
 </html>

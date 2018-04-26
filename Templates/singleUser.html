@@ -1,15 +1,18 @@
 {% extends "base.html" %}
-
 {% block content %}
-  <h1>Single Post!</h1>
-    
 
-      <ul>
-          
-         <li>Title : {{blogs.title}}</li>
-         <li>Content : {{blogs.body}}</li>
-            
-          
-       </ul>
+    <h3> {{ welcome }} </h3>
+    <h2> {{ title }} </h2>
+    <p> {{ body }} </p>
+    <h3> 
+        <form id= "individual_user" action= "/UserPage">
+            <span  style="font-size: 15px;">Written by:</span>
+            <input form= "individual_user" type= "submit" 
+                class= "link_button1" name= "user_link" 
+                value= "{{ author }}"/>
+                
+        </form>
+    </h3>
 
- {% endblock %}
+  
+{% endblock %}

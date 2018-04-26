@@ -1,24 +1,26 @@
 {% extends "base.html" %}
-
-TEST MESSAGE
 {% block content %}
-    <h1><center>Build a Blog</center></h1>
-    {% for user in users %}
-    <ul>
-           
-        {% for entry in all_entries %}
-        {% if user.id==entry.owner_id %}
-    
-            <li><h2> <a href="/blog?id={{ entry.id }}">{{ entry.title }}</a></h2></li>
-            <li>Content :{{ entry.body }}</li>
-            <li><i>Writter By : <a href="/blog?user={{user.id}}">{{user.username}}</i></a></li>
 
-       {% endif %}
-      {% endfor %}
-      
-  </ul>
-                
-            
+    <h1> {{ title }} </h1>
+    <h3> {{ welcome }} </h3>
+
+    {% if user_list|length == 0 %}
+        <p> No Users? </p>
+    {% else %}
+    <table>
+
+        {% for user in user_list %}
+            <ul>
+                <li>
+                    <form id= "individual_user" action= "/UserPage">
+                        <input form= "individual_user" type= "submit" 
+                            class= "link_button" name= "user_link" 
+                            value= "{{ user.username }}"/>
+                    </form>
+                </li>
+            </ul>
         {% endfor %}
-    
+    </table>
+
+    {% endif %}
 {% endblock %}
